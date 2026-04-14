@@ -28,31 +28,48 @@ def main(debug=False):
 
     admin = Admin(app, name="Admin Panel", theme=Bootstrap4Theme(swatch="darkly"))
 
-    aliases = {
-        "auth": "Superusers",
-        "book_type": "Book Type",
-        "books": "Books",
-        "members": "Our Members",
-        "borrowhistory": "Borrow History",
-    }
+    book_type = class_dict["book_type"]
+    books = class_dict["books"]
 
-    def create_view(table_model, db_session, name=None, **kwargs):
-        """
-        Function that displays Primary Keys and Foreign Keys and makes them editable.
-        """
+    if book_type:
 
-        columns = [col.name for col in table_model.__table__.columns]
+        class BookTypeView(ModelView):
+            column_list = (
+                "isbn",
+                "title",
+                "author",
+                "genre",
+                "date_published",
+                "latest_revision",
+            )
+            form_columns = (
+                "isbn",
+                "title",
+                "author",
+                "genre",
+                "date_published",
+                "latest_revision",
+            )
+            column_labels = {
+                "isbn": "ISBN",
+                "title": "TITLE",
+                "author": "AUTHOR",
+                "genre": "GENRE",
+                "date_published": "DATE PUBLISHED",
+                "latest_revision": "LATEST REVISION",
+            }
+            column_searchable_list = ["title", "author", "isbn"]
+            column_filters = ["genre"]
 
-        class DynamicModelView(ModelView):
-            column_list = columns
-            form_columns = columns
+    if books:
 
-        return DynamicModelView(table_model, db_session, name=name, **kwargs)
+        class BooksView(ModelView):
+            column_list = ("book_id", "isbn", "condition")
+            form_columns = ("book_id", "isbn", "condition")
+            column_labels = ("book_id", "isbn", "condition")
 
-    for table_name, model_class in class_dict.items():
-        display_name = aliases.get(table_name, table_name.capitalize())
-        view = create_view(model_class, db.session, name=display_name)
-        admin.add_view(view)
+    if book_type:
+        admin.add_view(BookTypeView(book_type, db.session, name="Books"))
 
     @app.route("/")
     def index():
