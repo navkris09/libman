@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS "book_type" (
 	"title"	TEXT NOT NULL,
 	"author"	TEXT NOT NULL,
 	"genre"	TEXT NOT NULL,
-	"date_pubished"	TEXT NOT NULL,
+	"date_published"	TEXT NOT NULL,
 	"latest_revision"	TEXT NOT NULL,
 	PRIMARY KEY("isbn")
 );
