@@ -41,8 +41,7 @@ if __name__ == "__main__":
     from adpan.main import main
     if not (Path(__file__).parent / "library.db").exists():
         initialize_database()
-        main()
     else:
         print("Database already exists. Initialization skipped.")
-        main()
+    main()
     
