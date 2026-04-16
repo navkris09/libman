@@ -30,6 +30,9 @@ def main(debug=False):
 
     book_type = class_dict["book_type"]
     books = class_dict["books"]
+    borrowhistory = class_dict["borrowhistory"]
+    members = class_dict["members"]
+    superusers = class_dict["superuser"]
 
     if book_type:
 
@@ -58,18 +61,111 @@ def main(debug=False):
                 "date_published": "DATE PUBLISHED",
                 "latest_revision": "LATEST REVISION",
             }
-            column_searchable_list = ["title", "author", "isbn"]
-            column_filters = ["genre"]
+            column_searchable_list = ["title", "author", "genre"]
+            # column_filters = ["genre"]
 
     if books:
 
         class BooksView(ModelView):
             column_list = ("book_id", "isbn", "condition")
             form_columns = ("book_id", "isbn", "condition")
-            column_labels = ("book_id", "isbn", "condition")
+            column_labels = {
+                "book_id": "BOOK ID",
+                "isbn": "ISBN",
+                "condition": "CONDITION",
+            }
+
+    if borrowhistory:
+
+        class BorrowHisView(ModelView):
+            column_list = (
+                "borrow_id",
+                "book_id",
+                "member_id",
+                "issued_at",
+                "issuer_id",
+                "due_by",
+            )
+            form_columns = (
+                "borrow_id",
+                "book_id",
+                "member_id",
+                "issued_at",
+                "issuer_id",
+                "due_by",
+            )
+            column_labels = {
+                "borrow_id": "BORROW ID",
+                "book_id": "BOOK ID",
+                "member_id": "MEMBER ID",
+                "issued_at": "ISSUED AT",
+                "issuer_id": "ISSUER ID",
+                "due_by": "DUE BY",
+            }
+
+    if members:
+
+        class MembersView(ModelView):
+            column_list = ("member_id", "name", "email", "phone_number", "member_since")
+            form_columns = (
+                "member_id",
+                "name",
+                "email",
+                "phone_number",
+                "member_since",
+            )
+            column_labels = {
+                "member_id": "MEMBER ID",
+                "name": "NAME",
+                "email": "EMAIL",
+                "phone_number": "PHONE NUMBER",
+                "member_since": "MEMBER_SINCE",
+            }
+            column_searchable_list = ["name", "email", "phone_number"]
+
+    if superusers:
+
+        class SuperusersView(ModelView):
+            column_list = (
+                "user_id",
+                "username",
+                "email",
+                "salt",
+                "password_hash",
+                "role",
+            )
+            form_columns = (
+                "user_id",
+                "username",
+                "email",
+                "salt",
+                "password_hash",
+                "role",
+            )
+            column_labels = {
+                "user_id": "USER ID",
+                "username": "USERNAME",
+                "email": "EMAIL",
+                "salt": "SALT",
+                "password_hash": "PASSWORD HASH",
+                "role": "ROLE",
+            }
+            column_searchable_list = ["username", "email"]
 
     if book_type:
-        admin.add_view(BookTypeView(book_type, db.session, name="Books"))
+        admin.add_view(BookTypeView(book_type, db.session, name="Book Types"))
+
+    if books:
+        admin.add_view(BooksView(books, db.session, name="Books"))
+
+    if borrowhistory:
+        admin.add_view(BorrowHisView(borrowhistory, db.session, name="Borrow History"))
+
+    if members:
+        admin.add_view(MembersView(members, db.session, name="Our Members"))
+
+    if superusers:
+        admin.add_view(SuperusersView(superusers, db.session, name="Superusers"))
 
     @app.route("/")
     def index():
